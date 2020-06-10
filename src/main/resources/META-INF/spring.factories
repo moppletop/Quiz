@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.moppletop.autoconfigure.QuizControllerAutoConfiguration,\
+  com.moppletop.autoconfigure.QuizSecurityAutoConfiguration,\
+  com.moppletop.autoconfigure.QuizLogicAutoConfiguration

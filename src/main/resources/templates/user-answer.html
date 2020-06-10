@@ -1,0 +1,7 @@
+<h1 th:text="${question}" class="quiz-body-heading display-3 text-white"></h1>
+<p class="text-white">
+    You have answered:
+    <strong th:text="${answer}"></strong>
+    <br>
+    <span th:text="${numAnswered} + '/' + ${numTotal} + ' other players have answered...'"></span>
+</p>

@@ -1,0 +1,25 @@
+<form class="text-light" method="post" th:action="@{/quiz/submit}">
+    <h1 th:text="${question}" class="quiz-body-heading display-3 text-white"></h1>
+    <audio controls>
+        <source th:src="${audio}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="text-light option-set">
+        <fieldset>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </fieldset>
+        <fieldset>
+            <label>
+                <input type="text" class="form-control form-group" name="option1" placeholder="Song/Piece">
+            </label>
+        </fieldset>
+        <fieldset>
+            <label>
+                <input type="text" class="form-control form-group" name="option2" placeholder="Artist/Band">
+            </label>
+        </fieldset>
+        <fieldset>
+            <button type="submit" class="btn btn-primary btn-pill">Submit</button>
+        </fieldset>
+    </div>
+</form>

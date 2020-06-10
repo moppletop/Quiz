@@ -1,0 +1,3 @@
+<li th:each="entry,iter : ${scores}" class="nav-item pr-4">
+    <a class="nav-link" href="#" th:text="'#' + ${iter.count} + ' ' + ${entry.key} + ': ' + ${entry.value}"></a>
+</li>

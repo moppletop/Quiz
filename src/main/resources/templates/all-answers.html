@@ -1,0 +1,13 @@
+<img th:if="${image} != null" th:src="${image}" alt="Question image">
+<h1 th:text="${question}" class="quiz-body-heading display-3 text-white"></h1>
+<h2 th:text="'Answer: ' + ${correctAnswer}" class="quiz-body-heading display-4 text-white"></h2>
+<div th:each="entry : ${answers}">
+    <div th:if="${entry.value.correct}" class="alert alert-success fade show" style="margin-bottom: 0">
+        <i class="fa fa-check"></i>
+        <strong th:text="${entry.key} + ': ' + ${entry.value.text}"></strong>
+    </div>
+    <div th:unless="${entry.value.correct}" class="alert alert-danger fade show" style="margin-bottom: 0">
+        <i class="fa fa-times"></i>
+        <strong th:text="${entry.key} + ': ' + ${entry.value.text}"></strong>
+    </div>
+</div>
