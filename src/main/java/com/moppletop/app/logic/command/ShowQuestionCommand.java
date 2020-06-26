@@ -1,6 +1,6 @@
 package com.moppletop.app.logic.command;
 
-import com.moppletop.app.entity.question.*;
+import com.moppletop.app.logic.question.*;
 import com.moppletop.app.logic.Quiz;
 import com.moppletop.app.logic.QuizManager;
 import lombok.extern.slf4j.Slf4j;
@@ -9,33 +9,27 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-public class SetQuestionCommand extends QuizCommand {
+public class ShowQuestionCommand extends QuizCommand {
 
-    public SetQuestionCommand(QuizManager manager) {
-        super(manager, "question");
+    public ShowQuestionCommand(QuizManager manager) {
+        super(manager, "show");
     }
 
     @Override
-    public void execute(Quiz quiz, String joinedArgs, String[] args) {
-        if (quiz == null || args.length < 2) {
+    public void execute(Quiz quiz, QuizCommandAnalysis analysis) {
+        if (quiz == null) {
             return;
         }
 
-        QuizQuestionType type = QuizQuestionType.valueOf(args[0].toUpperCase());
+        QuizQuestionType type = QuizQuestionType.valueOf(analysis.getRequiredFlag("type").toUpperCase());
+        int points = Integer.parseInt(analysis.getRequiredFlag("points"));
         QuizQuestion question;
-        String[] split = joinedArgs.split("\\|");
-        String questionText = split[1];
-        String correctAnswer = split[2];
-        String image = null;
-
-        if (args[1].startsWith("http") || args[1].startsWith("/")) {
-            image = args[1];
-        }
+        String questionText = analysis.getRequiredFlag("question");
+        String resourcePath = analysis.getFlag("resource");
 
         switch (type) {
             case MULTIPLE_CHOICE:
-                String[] options = new String[split.length - 2];
-                System.arraycopy(split, 2, options, 0, options.length);
+                String[] options = analysis.getRequiredFlag("options").split("\\|");
                 String answer = options[0];
                 boolean shuffle = true;
 
@@ -54,20 +48,20 @@ public class SetQuestionCommand extends QuizCommand {
                     shuffleArray(options);
                 }
 
-                question = new MultipleChoiceQuestion(questionText, image, options, answer);
+                question = new MultipleChoiceQuestion(points, questionText, resourcePath, options, answer);
                 break;
             case FREE_TEXT:
-                question = new FreeTextQuestion(questionText, image, correctAnswer);
+                question = new FreeTextQuestion(points, questionText, resourcePath, analysis.getRequiredFlag("answer"));
                 break;
             case AUDIO:
-                if (image == null) {
+                if (resourcePath == null) {
                     throw new IllegalArgumentException("Must provide an audio path");
                 } else {
-                    question = new AudioQuestion(questionText, correctAnswer, image);
+                    question = new AudioQuestion(points, questionText, analysis.getRequiredFlag("title"), analysis.getRequiredFlag("author"), resourcePath);
                 }
                 break;
             case TARGET_NUMBER:
-                question = new TargetNumberQuestion(questionText, image, Integer.parseInt(correctAnswer));
+                question = new TargetNumberQuestion(points, questionText, resourcePath, Integer.parseInt(analysis.getRequiredFlag("answer")));
                 break;
             default:
                 return;

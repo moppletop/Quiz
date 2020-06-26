@@ -1,4 +1,4 @@
-package com.moppletop.app.entity.question;
+package com.moppletop.app.logic.question;
 
 public enum QuizQuestionType {
 

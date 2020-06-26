@@ -10,7 +10,7 @@ public class StartQuizCommand extends QuizCommand {
     }
 
     @Override
-    public void execute(Quiz quiz, String joinedArgs, String[] args) {
+    public void execute(Quiz quiz, QuizCommandAnalysis analysis) {
         manager.startQuiz();
     }
 }

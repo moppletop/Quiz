@@ -1,6 +1,8 @@
 package com.moppletop.app.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class QuizSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    @Value("${quiz.password}")
+    private String password;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,6 +39,6 @@ public class QuizSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(new QuizUserDetailsService(passwordEncoder));
+        auth.userDetailsService(new QuizUserDetailsService(passwordEncoder, password));
     }
 }

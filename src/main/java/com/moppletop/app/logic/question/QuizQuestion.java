@@ -1,6 +1,7 @@
-package com.moppletop.app.entity.question;
+package com.moppletop.app.logic.question;
 
 import com.moppletop.app.logic.QuizManager;
+import com.moppletop.app.logic.answer.QuizAnswer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -14,12 +15,13 @@ import java.util.Map;
 public abstract class QuizQuestion {
 
     final QuizQuestionType type;
+    final int points;
     final String text;
-    final String image;
+    final String resource;
     final String correctAnswer;
     final Map<String, QuizAnswer> answers = new HashMap<>();
 
-    public abstract void submitAnswer(String user, String answer);
+    public abstract void submitAnswer(String user, String[] answer);
 
     public void setAnswer(String user, QuizAnswer answer) {
         answers.put(user, answer);

@@ -1,16 +1,2 @@
-# Spring configuration
-#server:
-#  port: 8080
-#  error:
-#    whitelabel:
-#      enabled: false
-
-#spring:
-#  http:
-#    log-request-details: true
-
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        security: debug
+quiz:
+  password: pwd

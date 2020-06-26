@@ -1,9 +1,9 @@
 package com.moppletop.app.logic;
 
-import com.moppletop.app.entity.QuizState;
-import com.moppletop.app.entity.question.PostProcessQuestion;
-import com.moppletop.app.entity.question.QuizAnswer;
-import com.moppletop.app.entity.question.QuizQuestion;
+import com.moppletop.app.logic.answer.QuizAnswer;
+import com.moppletop.app.logic.answer.QuizAnswerAccuracy;
+import com.moppletop.app.logic.question.PostProcessQuestion;
+import com.moppletop.app.logic.question.QuizQuestion;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -26,9 +26,9 @@ public class Quiz {
         scores.putIfAbsent(user, 0);
     }
 
-    void submit(String user, String answer) {
+    void submit(String user, String[] answers) {
         if (question != null) {
-            question.submitAnswer(user, answer);
+            question.submitAnswer(user, answers);
         }
     }
 
@@ -51,7 +51,7 @@ public class Quiz {
         this.question = question;
     }
 
-    public void revealAnswers(int points) {
+    public void revealAnswers() {
         if (question instanceof PostProcessQuestion) {
             ((PostProcessQuestion) question).process();
         }
@@ -63,8 +63,21 @@ public class Quiz {
             QuizAnswer answer = answers.get(user);
 
             if (answer == null) {
-                question.setAnswer(user, new QuizAnswer(QuizManager.NO_ANSWER, false));
-            } else if (answer.isCorrect()){
+                question.setAnswer(user, new QuizAnswer(QuizManager.NO_ANSWER, QuizAnswerAccuracy.INCORRECT));
+            } else {
+                int points;
+
+                switch (answer.getAccuracy()) {
+                    case CORRECT:
+                        points = question.getPoints();
+                        break;
+                    case PARTIALLY:
+                        points = question.getPoints() / 2;
+                        break;
+                    default:
+                        return;
+                }
+
                 scores.put(user, scores.get(user) + points);
             }
         });

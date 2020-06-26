@@ -1,6 +1,6 @@
 package com.moppletop.app.logic;
 
-import com.moppletop.app.entity.question.QuizAnswer;
+import com.moppletop.app.logic.answer.QuizAnswer;
 import com.moppletop.app.logic.command.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +18,8 @@ public class QuizManager {
 
     private final QuizCommand[] commands = {
             new StartQuizCommand(this),
-            new SetPointsCommand(this),
-            new SetQuestionCommand(this),
+            new ScoreCommand(this),
+            new ShowQuestionCommand(this),
             new RevealAnswerCommand(this),
     };
 
@@ -36,9 +36,9 @@ public class QuizManager {
         }
     }
 
-    public void submit(UserDetails user, String answer) {
+    public void submit(UserDetails user, String[] answers) {
         if (quiz != null) {
-            quiz.submit(user.getUsername(), answer);
+            quiz.submit(user.getUsername(), answers);
         }
     }
 
@@ -72,21 +72,12 @@ public class QuizManager {
 
         inputLoop:
         while ((input = scanner.nextLine()) != null) {
-            String[] args = input.split("\\s");
-
-            if (args.length == 0) {
-                continue;
-            }
-
-            String cmd = args[0];
+            input = input.trim();
 
             for (QuizCommand command : commands) {
-                if (command.test(cmd)) {
-                    String[] newArgs = new String[args.length - 1];
-                    System.arraycopy(args, 1, newArgs, 0, newArgs.length);
-
+                if (command.test(input)) {
                     try {
-                        command.execute(quiz, String.join(" ", newArgs), newArgs);
+                        command.execute(quiz, new QuizCommandAnalysis(input));
                     } catch (Throwable ex) {
                         log.warn("Error executing command: {} -> {}", ex.getClass().getSimpleName(), ex.getMessage());
                     }
@@ -95,7 +86,7 @@ public class QuizManager {
                 }
             }
 
-            log.info("Unknown command: {}", cmd);
+            log.info("Unknown command");
         }
     }
 

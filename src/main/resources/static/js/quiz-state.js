@@ -19,7 +19,6 @@ function quizFeedbackLoop() {
 const pollQuizData = async () => {
     const response = await fetch('/quiz/data/', {
         method: 'GET',
-        // body: "",
         headers: {
             'Content-Type': 'application/json'
         }

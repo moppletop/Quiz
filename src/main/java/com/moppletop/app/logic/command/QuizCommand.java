@@ -12,10 +12,10 @@ public abstract class QuizCommand implements Predicate<String> {
     protected final QuizManager manager;
     private final String command;
 
-    public abstract void execute(Quiz quiz, String joinedArgs, String[] args);
+    public abstract void execute(Quiz quiz, QuizCommandAnalysis analysis);
 
     @Override
     public boolean test(String command) {
-        return this.command.equals(command);
+        return command.startsWith(this.command);
     }
 }

@@ -1,11 +1,11 @@
 package com.moppletop.app.controller;
 
 import com.moppletop.app.entity.QuizData;
-import com.moppletop.app.entity.question.AudioQuestion;
-import com.moppletop.app.entity.question.MultipleChoiceQuestion;
-import com.moppletop.app.entity.question.QuizQuestion;
 import com.moppletop.app.logic.Quiz;
 import com.moppletop.app.logic.QuizManager;
+import com.moppletop.app.logic.question.AudioQuestion;
+import com.moppletop.app.logic.question.MultipleChoiceQuestion;
+import com.moppletop.app.logic.question.QuizQuestion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
+
+    private static final int MAX_ANSWER_LENGTH = 40;
 
     private final QuizManager quizManager;
     private final TemplateEngine engine;
@@ -82,7 +84,7 @@ public class QuizController {
                                 return ResponseEntity.notFound().build();
                         }
 
-                        variables.put("image", question.getImage());
+                        variables.put("image", question.getResource());
                     } else {
                         template = "user-answer";
                         variables.put("answer", answer);
@@ -100,7 +102,7 @@ public class QuizController {
                     variables.put("question", question.getText());
                     variables.put("correctAnswer", question.getCorrectAnswer());
                     variables.put("answers", question.getAnswers());
-                    variables.put("image", question.getImage());
+                    variables.put("image", question.getResource());
 
                     context = new WebContext(request, response, request.getServletContext(), request.getLocale(), variables);
                     break;
@@ -123,18 +125,19 @@ public class QuizController {
 
     @PostMapping("/submit")
     public ResponseEntity<String> submit(@RequestParam Map<String, String> params) {
-        String answer = params.entrySet().stream()
+        String[] answers = params.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith("option"))
                 .map(entry -> {
-                    if (entry.getValue().length() > 30) {
-                        return entry.getValue().substring(0, 30);
+                    if (entry.getValue().length() > MAX_ANSWER_LENGTH) {
+                        return entry.getValue().substring(0, MAX_ANSWER_LENGTH);
                     }
 
                     return entry.getValue();
-                }).collect(Collectors.joining(" - "));
+                })
+                .toArray(String[]::new);
 
-        if (!answer.isEmpty()) {
-            quizManager.submit(ControllerUtil.getCurrentUser(), answer);
+        if (answers.length != 0) {
+            quizManager.submit(ControllerUtil.getCurrentUser(), answers);
         }
 
         HttpHeaders headers = new HttpHeaders();

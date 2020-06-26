@@ -1,4 +1,4 @@
-package com.moppletop.app.entity;
+package com.moppletop.app.logic;
 
 public enum QuizState {
 

@@ -12,12 +12,12 @@ public class RevealAnswerCommand extends QuizCommand {
     }
 
     @Override
-    public void execute(Quiz quiz, String joinedArgs, String[] args) {
+    public void execute(Quiz quiz, QuizCommandAnalysis analysis) {
         if (quiz == null || quiz.getQuestion() == null) {
             return;
         }
 
-        quiz.revealAnswers(Integer.parseInt(args[0]));
+        quiz.revealAnswers();
         log.info("Revealing answers and awarding points...");
     }
 }
